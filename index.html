@@ -286,7 +286,16 @@ function render(){
 }
 function audio(){
     speechSynthesis.cancel();
-    speechSynthesis.speak(new SpeechSynthesisUtterance(data[n].audio))
+
+    const utterance = new SpeechSynthesisUtterance(data[n].audio);
+
+    utterance.lang = "en-US";
+
+    utterance.rate = 0.85;
+
+    utterance.pitch = 1;
+
+    speechSynthesis.speak(utterance);
 }
 function save(){let r=document.querySelector('input[name="answer"]:checked');if(r)answers[n]=Number(r.value)}
 function forward(){save();if(n<data.length-1){n++;render()}else finish()}
