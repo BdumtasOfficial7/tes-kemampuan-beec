@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>English Placement Test</title>
+<style>
+*{box-sizing:border-box}
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#f3f6fb;
+    color:#182230
+}
+.wrap{
+    max-width:900px;
+    margin:auto;
+    padding:14px
+}
+.card{
+    background:white;
+    border-radius:20px;
+    padding:24px;
+    margin:14px 0;
+    box-shadow:0 8px 30px #15233a12
+}
+.center{text-align:center}
+.hidden{display:none}
+.muted{color:#667085}
+.btn{
+    border:0;
+    border-radius:11px;
+    padding:12px 18px;
+    background:#2457d6;
+    color:#fff;
+    font-size:16px;
+    cursor:pointer
+}
+.btn.secondary{
+    background:#eaf0ff;
+    color:#2457d6
+}
+.btn:disabled{
+    opacity:.5
+}
+.field{
+    margin:12px 0
+}
+.field label{
+    display:block;
+    font-weight:bold;
+    margin-bottom:6px
+}
+.field input{
+    width:100%;
+    padding:12px;
+    border:1px solid #d5dae3;
+    border-radius:10px;
+    font-size:16px
+}
+.top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center
+}
+.badge{
+    background:#eaf0ff;
+    color:#2457d6;
+    padding:7px 11px;
+    border-radius:20px;
+    font-weight:bold
+}
+.progress{
+    height:9px;
+    background:#e6e9ef;
+    border-radius:20px;
+    overflow:hidden;
+    margin:17px 0
+}
+.progress span{
+    display:block;
+    height:100%;
+    background:#2457d6
+}
+.q{
+    font-size:20px;
+    font-weight:bold;
+    line-height:1.5
+}
+.option{
+    display:block;
+    border:1px solid #d9dee7;
+    border-radius:11px;
+    padding:13px;
+    margin:10px 0;
+    cursor:pointer
+}
+.option:hover{
+    background:#f5f8ff
+}
+.option input{
+    width:auto;
+    margin-right:9px
+}
+.controls{
+    display:flex;
+    gap:10px;
+    margin-top:22px
+}
+.controls .btn{
+    flex:1
+}
+.audio{
+    background:#f5f8ff;
+    border-radius:13px;
+    padding:15px;
+    margin-bottom:16px
+}
+.resultHero{
+    text-align:center;
+    background:#f1f5ff;
+    border-radius:18px;
+    padding:28px
+}
+.level{
+    font-size:60px;
+    font-weight:800;
+    color:#2457d6
+}
+.grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px
+}
+.skill{
+    border:1px solid #e0e4eb;
+    border-radius:14px;
+    padding:15px
+}
+.bar{
+    height:10px;
+    background:#e6e9ef;
+    border-radius:20px;
+    overflow:hidden
+}
+.bar span{
+    display:block;
+    height:100%;
+    background:#2457d6
+}
+.notice{
+    padding:12px;
+    background:#fff8df;
+    border-left:4px solid #d49b00;
+    border-radius:8px
+}
+.small{
+    font-size:13px
+}
+@media(max-width:600px){
+    .wrap{padding:8px}
+    .card{padding:18px}
+    .grid{grid-template-columns:1fr}
+    .level{font-size:50px}
+    .q{font-size:18px}
+}
+@media print{
+    .no-print{display:none!important}
+    body{background:white}
+    .card{box-shadow:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<section id="start" class="card">
+<div class="center">
+    <h1>🇬🇧 English Placement Test</h1>
+    <p class="muted">A complete diagnostic test for teenagers • A1–B2</p>
+</div>
+<div class="field">
+    <label>Student Name</label>
+    <input id="name" placeholder="Enter your name">
+</div>
+<div class="field">
+    <label>Age</label>
+    <input id="age" type="number" value="15">
+</div>
+<div class="notice">
+    <b>Important:</b> Answer independently. The test contains Vocabulary, Grammar, Reading, and a real Listening section. You will see your English level immediately after finishing.
+</div>
+<br><button class="btn" onclick="begin()">Start Test</button>
+</section>
+
+<section id="test" class="card hidden">
+<div class="top">
+    <span id="sec" class="badge"></span>
+    <b>⏱ <span id="clock">35:00</span></b>
+</div>
+<div class="progress"><span id="prog"></span></div>
+<div id="body"></div>
+<div class="controls no-print">
+    <button class="btn secondary" onclick="back()">Back</button>
+    <button class="btn" id="next" onclick="forward()">Next</button>
+</div>
+</section>
+
+<section id="result" class="hidden">
+<div class="card">
+<div class="resultHero">
+<p>YOUR ENGLISH LEVEL</p>
+<div class="level" id="level"></div>
+<h3 id="score"></h3>
+<p id="desc" class="muted"></p>
+</div>
+<h2 id="hello"></h2><p id="summary"></p>
+</div>
+<div class="card"><h2>📊 Skill Profile</h2><div id="skills" class="grid"></div></div>
+<div class="card"><h2>🎯 Your Priority Areas</h2><ul id="weak"></ul></div>
+<div class="card"><h2>📚 Suggested Learning Path</h2><div id="path"></div></div>
+<div class="card center no-print"><button class="btn" onclick="window.print()">Print / Save Result as PDF</button> <button class="btn secondary" onclick="location.reload()">New Test</button></div>
+</section>
+</div>
+
+<script>
+/* Each question has a unique prompt. Listening has an audio script and is scored separately. */
+const data=[
+{section:"Vocabulary",q:"Choose the word that means the opposite of 'ancient'.",o:["modern","quiet","narrow","careful"],a:0},
+{section:"Vocabulary",q:"If you 'lend' someone a book, you...",o:["give it permanently","let them use it and expect it back","buy another book","throw it away"],a:1},
+{section:"Vocabulary",q:"A person who is 'generous' usually likes to...",o:["share and give to others","avoid people","arrive late","complain"],a:0},
+{section:"Vocabulary",q:"What does 'exhausted' mean?",o:["very tired","very hungry","very angry","very excited"],a:0},
+{section:"Vocabulary",q:"Which word is closest in meaning to 'purchase'?",o:["sell","buy","borrow","repair"],a:1},
+{section:"Vocabulary",q:"If a problem is 'urgent', it needs attention...",o:["next year","immediately","only at night","never"],a:1},
+{section:"Vocabulary",q:"What is a 'neighborhood'?",o:["a type of food","an area where people live","a school subject","a sport"],a:1},
+{section:"Vocabulary",q:"Which word best completes: 'She felt ___ before her exam because she was worried.'",o:["nervous","wooden","empty","silent"],a:0},
+{section:"Vocabulary",q:"'Reduce' means to...",o:["make something smaller or less","make something louder","make something new","move somewhere"],a:0},
+{section:"Vocabulary",q:"An 'advantage' is...",o:["a benefit","a mistake","a punishment","a question"],a:0},
+
+{section:"Grammar",q:"My sister ___ to school by bus every morning.",o:["go","goes","going","went"],a:1},
+{section:"Grammar",q:"Listen! Someone ___ at the door.",o:["knocks","knocked","is knocking","has knocked"],a:2},
+{section:"Grammar",q:"We ___ that museum last Saturday.",o:["visit","visited","have visited","are visiting"],a:1},
+{section:"Grammar",q:"While I ___ dinner, my brother called me.",o:["cook","cooked","was cooking","have cooked"],a:2},
+{section:"Grammar",q:"She ___ her homework already.",o:["finishes","finished","has finished","is finishing"],a:2},
+{section:"Grammar",q:"They ___ here tomorrow afternoon.",o:["will come","came","have come","coming"],a:0},
+{section:"Grammar",q:"You ___ practice every day if you want to improve.",o:["should","would to","must to","can to"],a:0},
+{section:"Grammar",q:"English ___ in many countries.",o:["speaks","is spoken","spoke","speaking"],a:1},
+{section:"Grammar",q:"If I were you, I ___ more carefully.",o:["study","studied","would study","will study"],a:2},
+{section:"Grammar",q:"The student ___ won the competition is my friend.",o:["which","who","where","when"],a:1},
+{section:"Grammar",q:"He ___ English for five years.",o:["studies","studied","has studied","is study"],a:2},
+{section:"Grammar",q:"There aren't ___ chairs for everyone.",o:["enough","much","too","very"],a:0},
+{section:"Grammar",q:"This test is ___ than the previous one.",o:["easy","easier","more easy","easiest"],a:1},
+{section:"Grammar",q:"When I arrived, the movie ___.",o:["already started","had already started","has started","starts"],a:1},
+{section:"Grammar",q:"She said that she ___ tired.",o:["is","was","will","has"],a:1},
+
+{section:"Reading",q:"Read the passage: 'Lina wanted to become healthier, so she started walking to school three days a week. At first, the journey felt long, but after a month she noticed that she had more energy during the day.' What change did Lina notice?",o:["She had more energy.","She stopped going to school.","She became tired all day.","She bought a bicycle."],a:0},
+{section:"Reading",q:"Read: 'Arif enjoys photography. He usually takes pictures of buildings and nature, but recently he has become interested in taking portraits of his friends. He watches tutorials online to learn how to use light.' What is Arif learning about?",o:["Cooking","Lighting for photography","Playing music","Driving"],a:1},
+{section:"Reading",q:"Read: 'Many students find group projects difficult because members may have different schedules. However, dividing responsibilities clearly can make the project easier and teach students how to cooperate.' What can make group projects easier?",o:["Avoiding communication","Dividing responsibilities clearly","Working alone","Changing schools"],a:1},
+{section:"Reading",q:"Read: 'Maya missed the bus because she woke up late. Instead of waiting for the next bus, she called her father, who drove her to school. She promised to prepare her school bag the night before.' Why did Maya miss the bus?",o:["The bus broke down","She woke up late","Her father was late","School started later"],a:1},
+{section:"Reading",q:"Read: 'Learning from mistakes is important. When students receive useful feedback, they can understand what went wrong and try a better approach next time.' What is the main message?",o:["Mistakes should always be hidden.","Feedback can help students improve.","Students should never try again.","Learning is unnecessary."],a:1},
+
+{section:"Listening",audio:"Hello, I'm Kevin. I usually finish school at three thirty. On Mondays I go directly home, but on Wednesdays I stay at school because I have basketball practice until five o'clock.",q:"Why does Kevin stay at school on Wednesdays?",o:["He has basketball practice.","He has an English exam.","He waits for his brother.","He works at the school."],a:0},
+{section:"Listening",audio:"Nadia wanted to visit her grandmother on Sunday. However, the weather forecast predicted heavy rain, so she changed her plan and decided to visit on Monday instead.",q:"Why did Nadia change her plan?",o:["Her grandmother was away.","She had an exam.","Heavy rain was expected.","She had basketball practice."],a:2},
+{section:"Listening",audio:"Tom bought a notebook, two pens, and a dictionary. The notebook cost three dollars, each pen cost one dollar, and the dictionary cost five dollars. He paid ten dollars in total.",q:"How much did the dictionary cost?",o:["One dollar","Three dollars","Five dollars","Ten dollars"],a:2},
+{section:"Listening",audio:"Sarah has studied English for two years. She is comfortable reading short articles, but she finds fast conversations difficult. Her teacher suggested listening to short podcasts and repeating useful phrases.",q:"What does Sarah find difficult?",o:["Reading short articles","Fast conversations","Writing her name","Using a dictionary"],a:1},
+{section:"Listening",audio:"David planned to play football after school, but his friend called and said the field was closed because workers were repairing it. David decided to go to the library instead.",q:"Where did David decide to go?",o:["The football field","The cinema","The library","His friend's house"],a:2},
+{section:"Listening",audio:"Emma's family is going on a trip next month. They will travel by train on Friday evening and stay in a hotel for two nights. On Saturday they plan to visit a museum.",q:"How many nights will Emma's family stay in the hotel?",o:["One","Two","Three","Four"],a:1},
+{section:"Listening",audio:"Michael wanted to buy a new laptop, but he decided to wait until next month because the store was offering a discount then. He plans to save some money before buying it.",q:"Why will Michael wait until next month?",o:["The laptop is broken.","The store will offer a discount.","He does not need a laptop.","The store is closed forever."],a:1},
+{section:"Listening",audio:"Lucy normally studies in the afternoon. Today she has a music lesson at four, so she decided to study in the morning before going to the lesson.",q:"When will Lucy study today?",o:["At night","In the morning","At four","Tomorrow afternoon"],a:1},
+{section:"Listening",audio:"James was nervous about his presentation. He practiced several times at home and asked his sister to listen. During the presentation, he made one small mistake but continued confidently.",q:"What helped James prepare for the presentation?",o:["He cancelled it.","He practiced several times.","He ignored it.","He arrived late."],a:1},
+{section:"Listening",audio:"The teacher announced that the science test would be moved from Tuesday to Thursday because the school would have a special event on Tuesday.",q:"When will the science test take place?",o:["Monday","Tuesday","Wednesday","Thursday"],a:3}
+];
+
+let n=0,answers=[],seconds=2100,interval;
+function begin(){if(!document.getElementById("name").value.trim()){alert("Please enter the student's name.");return}document.getElementById("start").classList.add("hidden");document.getElementById("test").classList.remove("hidden");interval=setInterval(tick,1000);render()}
+function tick(){seconds--;document.getElementById("clock").textContent=String(Math.floor(seconds/60)).padStart(2,"0")+":"+String(seconds%60).padStart(2,"0");if(seconds<=0)finish()}
+function render(){
+ let x=data[n], options=x.o, q=x.q;
+ document.getElementById("sec").textContent=x.section;
+ document.getElementById("prog").style.width=((n+1)/data.length*100)+"%";
+ let h='<p class="muted">Question '+(n+1)+' of '+data.length+'</p>';
+ if(x.section==="Listening")h+='<div class="audio"><b>🎧 Listening Test</b><p>Listen carefully before answering. You may replay the audio.</p><button class="btn secondary" onclick="audio()">▶ Play Audio</button></div>';
+ h+='<div class="q">'+q+'</div>';
+ options.forEach((o,j)=>h+='<label class="option"><input type="radio" name="answer" value="'+j+'" '+(answers[n]===j?"checked":"")+'>'+o+'</label>');
+ document.getElementById("body").innerHTML=h;document.getElementById("next").textContent=n===data.length-1?"Finish Test":"Next";
+}
+function audio(){
+    speechSynthesis.cancel();
+    speechSynthesis.speak(new SpeechSynthesisUtterance(data[n].audio))
+}
+function save(){let r=document.querySelector('input[name="answer"]:checked');if(r)answers[n]=Number(r.value)}
+function forward(){save();if(n<data.length-1){n++;render()}else finish()}
+function back(){save();if(n>0){n--;render()}}
+function finish(){save();clearInterval(interval);document.getElementById("test").classList.add("hidden");document.getElementById("result").classList.remove("hidden");result()}
+function sectionScore(s){let ids=data.map((x,i)=>x.section===s?i:-1).filter(i=>i>=0),correct=ids.filter(i=>answers[i]===data[i].a).length;return Math.round(correct/ids.length*100)}
+function level(x){return x<45?"A1":x<65?"A2":x<82?"B1":"B2"}
+function levelDesc(x){return {A1:"Beginner — you can understand and use very basic English.",A2:"Elementary — you can communicate in familiar everyday situations.",B1:"Intermediate — you can understand and express ideas on familiar topics.",B2:"Upper-Intermediate — you can communicate confidently on many topics."}[x]}
+function result(){
+ let s={Vocabulary:sectionScore("Vocabulary"),Grammar:sectionScore("Grammar"),Reading:sectionScore("Reading"),Listening:sectionScore("Listening")};
+ let total=Math.round(Object.values(s).reduce((a,b)=>a+b,0)/4),L=level(total);
+ document.getElementById("level").textContent=L;document.getElementById("score").textContent=total+"% overall";document.getElementById("desc").textContent=levelDesc(L);
+ document.getElementById("hello").textContent="🎉 Great job, "+document.getElementById("name").value+"!";
+ document.getElementById("summary").textContent="Your estimated English level is "+L+". Your Listening score is measured separately from Grammar, Reading, and Vocabulary.";
+ let sh="";Object.entries(s).forEach(([k,v])=>sh+='<div class="skill"><b>'+k+'</b><p>'+v+'% • '+level(v)+'</p><div class="bar"><span style="width:'+v+'%"></span></div></div>');document.getElementById("skills").innerHTML=sh;
+ let weak=Object.entries(s).sort((a,b)=>a[1]-b[1]).slice(0,2);
+ document.getElementById("weak").innerHTML=weak.map(x=>'<li><b>'+x[0]+'</b> ('+x[1]+'%): '+tip(x[0])+'</li>').join("");
+ let path=L==="A1"?["Basic vocabulary and everyday expressions","Be / Have / Do","Simple Present","Basic questions and answers","Short listening practice"]:L==="A2"?["Simple Present, Past and Future","Everyday conversation","Vocabulary by topic","Short listening conversations","Paragraph writing"]:L==="B1"?["Present Perfect and narrative tenses","Giving opinions and explanations","Conversation fluency","Natural listening practice","Opinion paragraphs"]:["Conditionals and passive voice","Discussion and argumentation","Advanced vocabulary","Longer natural listening","Essay and presentation skills"];
+ document.getElementById("path").innerHTML="<ol>"+path.map(x=>"<li>"+x+"</li>").join("")+"</ol>";
+}
+function tip(k){return {Vocabulary:"learn words by topic and use each new word in a sentence.",Grammar:"review sentence patterns and practice grammar through conversation.",Reading:"read short English articles and answer questions without translating every sentence.",Listening:"listen to short English audio daily, replay it, and repeat key sentences."}[k]}
+</script>
+</body>
+</html>
